@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="container mt-5">
+    <!-- Titre de la page -->
+    <div class="jumbotron">
+  <h1 class="display-4">Spin the wheel !</h1>
+  <p class="lead">You just have to add names to the wheel and then enjoy !</p>
+  <hr class="my-4">
+</div>
+
+    <!-- Formulaire pour ajouter un prénom -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <form action="{{ path('add_name') }}" method="POST" class="mt-4" id="add-name-form">
+                <div class="input-group">
+                    <input type="text" id="new-name" name="name" class="form-control" placeholder="Add a futur winner here" required>
+                    <button type="submit" class="btn btn-success">Add host if needed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bouton pour lancer la roue -->
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <button id="spin-button" class="btn btn-success btn-lg">Spin the wheel</button>
+        </div>
+    </div>
+
+    <!-- Zone pour afficher la roue -->
+    <div class="row">
+        <div class="col-md-6" >
+            <canvas id="wheel-container" width="600" height="600" style= "margin-left:-46px"></canvas>
+        </div>
+        <div class="col-md-3 mr-3" style="margin-left:-19px">
+            <h2>Last 5 draws</h2>
+            <ul id="history-list" class="list-group">
+                {% for tirage in history %}
+                    <li class="list-group-item">
+                        {{ tirage.name }} - {{ tirage.drawDate|date('d/m/Y H:i:s') }}
+                    </li>
+                {% else %}
+                    <li class="list-group-item">No draws yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-3" style="margin-left:19px">
+            <div class="row">
+                <h2>Already drawn</h2>
+                <ul id="redraw-list" class="list-group">
+                    {% for firstName in drawnFirstNames %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ firstName.name }}
+                            <button class="btn btn-outline-primary btn-sm" onclick="reAddName('{{ firstName.id }}')">Re add</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn btn-outline-success btn-sm mt-3" onclick="reAddNameAll()">Re add everyone</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- Div cachée contenant les prénoms sous forme de JSON -->
+    <script id="firstNamesData" type="application/json">
+        {{ firstNames|map(f => f.name)|json_encode()|raw }}
+    </script>
+</div>
+<!-- Modal Bootstrap pour afficher le vainqueur -->
+<div class="modal fade" id="winnerModal" tabindex="-1" aria-labelledby="winnerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="winnerModalLabel">Winner</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Ici s'affichera le prénom du vainqueur -->
+        <p id="winner-name"></p><p> is the lucky winner for the next weather ! &#128540;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const names = {{ firstNames|map(f => f.name)|json_encode()|raw }} // Twig pour convertir le tableau en JSON utilisable par JS
+    const canvas = document.getElementById('wheel-container');
+    const ctx = canvas.getContext('2d');
+    const numSegments = names.length;  // Nombre de quartiers
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 250;
+
+    // Couleurs pour chaque segment
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#FFBD33'];
+
+    // Dessiner la roue
+    for (let i = 0; i < numSegments; i++) {
+        // Calculer l'angle pour chaque segment
+        const startAngle = (i / numSegments) * 2 * Math.PI;
+        const endAngle = ((i + 1) / numSegments) * 2 * Math.PI;
+
+        // Dessiner le segment
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+
+        // Remplir avec une couleur
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+
+        // Optionnel: Dessiner une ligne de séparation entre chaque quartier
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Positionner et dessiner le texte (nom) sur chaque segment
+        const textAngle = startAngle + (endAngle - startAngle) / 2;
+        // Sauvegarder le contexte avant rotation
+        ctx.save();
+
+        // Pivoter le canevas au centre du segment
+        ctx.translate(centerX, centerY);  // Se déplacer au centre du canevas
+        ctx.rotate(textAngle);  // Pivoter selon l'angle du segment
+
+        // Déplacer le texte au bon endroit le long du rayon
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 20px Arial';
+
+        // Dessiner le texte à une distance du centre, dans la direction du segment
+        ctx.fillText(names[i], radius / 2, 0);  // Le texte est dessiné à la moitié du rayon
+
+        // Restaurer le contexte après avoir dessiné le texte
+        ctx.restore();
+    }
+</script>
+
+{% endblock %}
+
