@@ -25,6 +25,9 @@ class FirstName
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $team = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,6 +66,17 @@ class FirstName
     {
         $this->createdAt = $createdAt;
 
+        return $this;
+    }
+
+    public function getTeam(): ?string
+    {
+        return $this->team;
+    }
+
+    public function setTeam(string $team): self
+    {
+        $this->team = $team;
         return $this;
     }
 }

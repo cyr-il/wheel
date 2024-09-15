@@ -11,9 +11,10 @@
     <!-- Formulaire pour ajouter un prénom -->
     <div class="row justify-content-center mt-4">
         <div class="col-md-6">
-            <form action="{{ path('add_name') }}" method="POST" class="mt-4" id="add-name-form">
+            <form action="{{ path('add_name', {team: team})  }}" method="POST" class="mt-4" id="add-name-form">
                 <div class="input-group">
                     <input type="text" id="new-name" name="name" class="form-control" placeholder="Add a futur winner here" required>
+                    <input type="hidden" name="team" id="team" value="{{ team }}">
                     <button type="submit" class="btn btn-success">Add host if needed</button>
                 </div>
             </form>

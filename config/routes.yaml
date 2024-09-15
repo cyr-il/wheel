@@ -3,3 +3,20 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+team1_wheel:
+    path: /sith
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'sith'
+
+team2_wheel:
+    path: /trooper
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'trooper'
+
+team3_wheel:
+    path: /jedi
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'jedi'

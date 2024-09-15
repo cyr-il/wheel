@@ -20,6 +20,9 @@ class DrawHistory
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $drawDate = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $team = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,17 @@ class DrawHistory
     {
         $this->drawDate = $drawDate;
 
+        return $this;
+    }
+
+    public function getTeam(): ?string
+    {
+        return $this->team;
+    }
+
+    public function setTeam(string $team): self
+    {
+        $this->team = $team;
         return $this;
     }
 }

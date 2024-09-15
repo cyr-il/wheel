@@ -10,6 +10,21 @@
     
     <!-- Ton propre fichier CSS -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-image: {% if team == 'sith' %}
+                            url('images/sith.webp')
+                            {% elseif team == 'trooper' %}
+                            url('images/trooper.jpg')
+                            {% elseif team == 'jedi' %}
+                            url('images/jedi.png')
+                            {% endif %};
+                background-position: bottom right;  /* Place l'image en bas à droite */
+                background-size: contain;  /* Redimensionne l'image pour qu'elle soit entièrement visible sans être coupée */
+                background-repeat: no-repeat;  /* Empêche la répétition de l'image */
+                background-attachment: fixed;  /* L'image de fond reste en place lorsque l'utilisateur fait défiler la page */
+        }
+    </style>
 </head>
 <body>
 

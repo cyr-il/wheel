@@ -5,7 +5,7 @@ function setupWheel(firstNames) {
     
     // Calcul de l'angle de chaque prénom
     const angleStep = 360 / nameCount;  // Angle en degrés pour chaque prénom
-    
+
     // Créer les éléments li pour chaque prénom avec des tailles égales
     firstNames.forEach((name, index) => {
         const listItem = document.createElement('li');
@@ -20,12 +20,12 @@ function setupWheel(firstNames) {
         wheel.appendChild(listItem);
     });
 }
+
 // Fonction pour faire tourner la roue
 let currentRotation = 0;  // Stocke la rotation totale
 let isSpinning = false;
 
 function spinWheel() {
-
     if (isSpinning) {
         return;
     }
@@ -63,12 +63,12 @@ function spinWheel() {
         
         isSpinning = false;
         document.getElementById('spin-button').disabled = false;
-    }, 7000);
+    }, 10000);
 
     // Supprimer la transition après l'animation pour ne pas affecter les futures rotations
     setTimeout(function() {
         wheel.style.transition = 'none';
-    }, 7000);
+    }, 10000);
 }
 
 // Mettre à jour l'historique
@@ -77,11 +77,14 @@ function updateHistory(name) {
     let listItem = document.createElement('li');
     listItem.className = 'list-group-item';
     listItem.innerHTML = name;
+    historyList.insertBefore(listItem, historyList.firstChild);  // Ajouter le prénom en haut de l'historique
 }
 
 // Fonction pour récupérer et afficher le prénom tiré
 function fetchAndDisplayName() {
-    fetch('/spin')
+    const team = document.getElementById('team').value;  // Récupérer l'équipe depuis un champ caché (ou d'une autre source)
+    
+    fetch(`/${team}/spin`)
         .then(response => response.json())
         .then(data => {
             if (data.name) {
@@ -91,6 +94,7 @@ function fetchAndDisplayName() {
                 const winnerModal = new bootstrap.Modal(document.getElementById('winnerModal'));
                 winnerModal.show();
                 console.log("Modal affichée avec le prénom : ", data.name);
+
                 // Retirer le prénom de la roue
                 removeNameFromWheel(data.name);
                 
@@ -106,9 +110,10 @@ function fetchAndDisplayName() {
             }
         });
 }
+
 // Fonction pour retirer le prénom de la roue
 function removeNameFromWheel(name) {
-    const wheelItems = Array.from(document.getElementById('wheel-container'));
+    const wheelItems = Array.from(document.querySelectorAll('#wheel-container li'));
     const updatedNames = wheelItems
         .filter(item => item.textContent !== name)
         .map(item => item.textContent);  // Garde les prénoms restants
@@ -117,10 +122,11 @@ function removeNameFromWheel(name) {
     setupWheel(updatedNames);
 }
 
-
 // Réintégrer un prénom dans la liste
 function reAddName(id) {
-    fetch('/reAddName/' + id, { method: 'POST' })
+    const team = document.getElementById('team').value;
+    
+    fetch(`/${team}/reAddName/${id}`, { method: 'POST' })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -132,12 +138,18 @@ function reAddName(id) {
 // Gestion du formulaire d'ajout de prénom
 document.getElementById('add-name-form').addEventListener('submit', function(event) {
     event.preventDefault();
+    
     const name = document.getElementById('new-name').value;
-    console.log(name);
-    fetch('/add-name', {
+    const team = document.getElementById('team').value;  // Récupérer l'équipe
+
+    console.log('Team:', team);  // Vérifie la valeur de "team"
+
+    const url = '/' + team + '/add-name';  // Concaténation classique au lieu de backticks
+    console.log('URL:', url);  // Vérifie que l'URL est correcte
+    fetch('/' + team + '/add-name', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name })
+        body: JSON.stringify({ name: name, team: team })
     }).then(response => {
         if (response.ok) {
             location.reload();
@@ -155,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Lancer la roue au clic du bouton
     document.getElementById('spin-button').addEventListener('click', spinWheel);
 });
+
 // Fonction pour ajouter le prénom à la section "Réintégrer un prénom"
 function addNameToRedrawList(name, id) {
     const redrawList = document.getElementById('redraw-list');
@@ -171,18 +184,11 @@ function addNameToRedrawList(name, id) {
     redrawList.appendChild(listItem);
 }
 
-document.getElementById('spin-button').addEventListener('click', function() {
-    // Simuler un tirage de nom (peut aussi être remplacé par une requête AJAX)
-    const name = document.getElementById('new-name').value;
-    // Appeler la fonction pour mettre à jour l'historique
-    updateHistory(name);
-});
-
 function reAddNameAll() {
-    // Envoyer la requête POST pour réintégrer tous les prénoms
-    fetch('/reAddNameAll', { method: 'POST' })
+    const team = document.getElementById('team').value;
+
+    fetch(`/${team}/reAddNameAll`, { method: 'POST' })
         .then(response => {
-            // Vérifier si la requête est réussie (code 200-299)
             if (!response.ok) {
                 throw new Error(`Erreur HTTP : ${response.status}`);
             }
@@ -200,4 +206,3 @@ function reAddNameAll() {
             console.error('Erreur lors de la requête:', error);
         });
 }
-
