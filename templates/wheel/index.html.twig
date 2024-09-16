@@ -9,63 +9,75 @@
 </div>
 
     <!-- Formulaire pour ajouter un prénom -->
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-            <form action="{{ path('add_name', {team: team})  }}" method="POST" class="mt-4" id="add-name-form">
-                <div class="input-group">
-                    <input type="text" id="new-name" name="name" class="form-control" placeholder="Add a futur winner here" required>
-                    <input type="hidden" name="team" id="team" value="{{ team }}">
-                    <button type="submit" class="btn btn-success">Add host if needed</button>
-                </div>
-            </form>
-        </div>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <form action="{{ path('add_name', {team: team})  }}" method="POST" class="mt-4" id="add-name-form">
+            <div class="input-group">
+                <input type="text" id="new-name" name="name" class="form-control" placeholder="Add a futur winner here" required>
+                <input type="hidden" name="team" id="team" value="{{ team }}">
+                <button type="submit" class="btn btn-success">Add host if needed</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Bouton pour lancer la roue -->
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <button id="spin-button" class="btn btn-success btn-lg">Spin the wheel</button>
-        </div>
+<!-- Bouton pour lancer la roue -->
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <button id="spin-button" class="btn btn-success btn-lg">Spin the wheel</button>
     </div>
+</div>
 
-    <!-- Zone pour afficher la roue -->
-    <div class="row">
-        <div class="col-md-6" >
-            <canvas id="wheel-container" width="600" height="600" style= "margin-left:-46px"></canvas>
-        </div>
-        <div class="col-md-3 mr-3" style="margin-left:-19px">
-            <h2>Last 5 draws</h2>
-            <ul id="history-list" class="list-group">
-                {% for tirage in history %}
-                    <li class="list-group-item">
-                        {{ tirage.name }} - {{ tirage.drawDate|date('d/m/Y H:i:s') }}
+<!-- Zone pour afficher la roue -->
+<div class="row">
+    <div class="col-md-6" >
+        <canvas id="wheel-container" width="600" height="600" style= "margin-left:-46px"></canvas>
+    </div>
+    <div class="col-md-3 mr-3" style="margin-left:-19px">
+        <h2>Last 5 draws</h2>
+        <ul id="history-list" class="list-group">
+            {% for tirage in history %}
+                <li class="list-group-item">
+                    {{ tirage.name }} - {{ tirage.drawDate|date('d/m/Y H:i:s') }}
+                </li>
+            {% else %}
+                <li class="list-group-item">No draws yet</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-3" style="margin-left:19px">
+        <div class="row">
+            <h2>Already drawn</h2>
+            <ul id="redraw-list" class="list-group">
+                {% for firstName in drawnFirstNames %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ firstName.name }}
+                        <button class="btn btn-outline-primary btn-sm" onclick="reAddName('{{ firstName.id }}')">Restore name</button>
                     </li>
-                {% else %}
-                    <li class="list-group-item">No draws yet</li>
                 {% endfor %}
             </ul>
-        </div>
-        <div class="col-md-3" style="margin-left:19px">
-            <div class="row">
-                <h2>Already drawn</h2>
-                <ul id="redraw-list" class="list-group">
-                    {% for firstName in drawnFirstNames %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ firstName.name }}
-                            <button class="btn btn-outline-primary btn-sm" onclick="reAddName('{{ firstName.id }}')">Restore name</button>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <button class="btn btn-outline-success btn-sm mt-3" onclick="reAddNameAll()">Restore all names</button>
-            </div>
-        </div>
+            <button class="btn btn-outline-success btn-sm mt-3" onclick="reAddNameAll()">Restore all names</button>
         </div>
     </div>
-    <!-- Div cachée contenant les prénoms sous forme de JSON -->
-    <script id="firstNamesData" type="application/json">
-        {{ firstNames|map(f => f.name)|json_encode()|raw }}
-    </script>
 </div>
+<div class="container mt-5">
+    <h2>First names list</h2>
+    <ul class="list-group">
+        {% for firstName in firstNames %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ firstName.name }}
+                <!-- Bouton de suppression avec AJAX -->
+                <button type="button" class="btn btn-danger btn-sm delete-name-btn" data-url="{{ path('delete_name', {id: firstName.id}) }}">Delete</button>
+            </li>
+        {% else %}
+            <li class="list-group-item">No first name found</li>
+        {% endfor %}
+    </ul>
+</div>
+<!-- Div cachée contenant les prénoms sous forme de JSON -->
+<script id="firstNamesData" type="application/json">
+    {{ firstNames|map(f => f.name)|json_encode()|raw }}
+</script>
 <!-- Modal Bootstrap pour afficher le vainqueur -->
 <div class="modal fade" id="winnerModal" tabindex="-1" aria-labelledby="winnerModalLabel" aria-hidden="true">
   <div class="modal-dialog">

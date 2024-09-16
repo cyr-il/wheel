@@ -117,5 +117,23 @@ class WheelController extends AbstractController
     {
         return $this->render('home/index.html.twig', [
             'team' => null,  // ou une valeur par défaut comme 'home'
-        ]);    }
+        ]);    
+    }
+
+    #[Route('/delete-name/{id}', name: 'delete_name', methods: ['POST'])]
+    public function deleteName(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $firstName = $em->getRepository(FirstName::class)->find($id);
+        
+        if ($firstName) {
+            $em->remove($firstName);
+            $em->flush();
+    
+            return new JsonResponse(['success' => true]);
+        }
+    
+        return new JsonResponse(['success' => false, 'message' => 'Prénom non trouvé.'], Response::HTTP_BAD_REQUEST);
+    }
+         
+
 }

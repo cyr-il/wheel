@@ -206,3 +206,32 @@ function reAddNameAll() {
             console.error('Erreur lors de la requête:', error);
         });
 }
+
+document.querySelectorAll('.delete-name-btn').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault();  // Empêche la soumission normale du formulaire
+
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce prénom ?')) {
+            const url = this.getAttribute('data-url');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Supprimer l'élément du DOM après suppression réussie
+                    this.closest('li').remove();
+                } else {
+                    alert('Erreur lors de la suppression.');
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+    });
+});
+
