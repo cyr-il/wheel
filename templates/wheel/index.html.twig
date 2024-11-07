@@ -90,6 +90,8 @@
         <!-- Ici s'affichera le prénom du vainqueur -->
         {% if team == 'copilop' %}
             <p id="winner-name"></p><p> is the lucky winner for the next meeting ! &#128540;</p>
+        {% elseif team == 'valSE' %}
+            <p id="winner-name"></p><p> is the lucky bear for the next time! 🐻</p>
         {% else %}
             <p id="winner-name"></p><p> is the lucky winner for the next weather ! &#128540;</p>
         {% endif %}

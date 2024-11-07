@@ -26,3 +26,9 @@ team4_wheel:
     controller: App\Controller\WheelController::index
     defaults:
         team: 'copilop'
+
+team5_wheel:
+    path: /valSE
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'valSE'
