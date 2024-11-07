@@ -20,3 +20,9 @@ team3_wheel:
     controller: App\Controller\WheelController::index
     defaults:
         team: 'jedi'
+
+team4_wheel:
+    path: /copilop
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'copilop'

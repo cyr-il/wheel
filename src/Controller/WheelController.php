@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WheelController extends AbstractController
 {
-    #[Route('/{team}', name: 'wheel', requirements: ['team' => 'sith|trooper|jedi'])]
+    #[Route('/{team}', name: 'wheel', requirements: ['team' => 'sith|trooper|jedi|copilop'])]
     public function index(string $team, EntityManagerInterface $em): Response
     {
         // Prénoms non tirés spécifiques à l'équipe
@@ -33,7 +33,7 @@ class WheelController extends AbstractController
         ]);
     }
 
-    #[Route('/{team}/spin', name: 'spin_wheel', requirements: ['team' => 'sith|trooper|jedi'])]
+    #[Route('/{team}/spin', name: 'spin_wheel', requirements: ['team' => 'sith|trooper|jedi|copilop'])]
     public function spin(string $team, EntityManagerInterface $em): JsonResponse
     {
         // Récupérer tous les prénoms non tirés pour une équipe spécifique
@@ -60,7 +60,7 @@ class WheelController extends AbstractController
         return new JsonResponse(['name' => $randomFirstName->getName()]);
     }
 
-    #[Route('/{team}/add-name', name: 'add_name', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi'])]
+    #[Route('/{team}/add-name', name: 'add_name', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi|copilop'])]
     public function addName(string $team, Request $request, EntityManagerInterface $em): Response
     {
         // Récupérer les données envoyées par la requête
@@ -85,7 +85,7 @@ class WheelController extends AbstractController
         return new JsonResponse(['success' => false, 'message' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/{team}/reAddName/{id}', name: 're_add_name', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi'])]
+    #[Route('/{team}/reAddName/{id}', name: 're_add_name', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi|copilop'])]
     public function reAddName(string $team, $id, EntityManagerInterface $em): JsonResponse
     {
         $firstName = $em->getRepository(FirstName::class)->findOneBy(['id' => $id, 'team' => $team]);
@@ -99,7 +99,7 @@ class WheelController extends AbstractController
         return new JsonResponse(['success' => false], JsonResponse::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/{team}/reAddNameAll', name: 're_add_name_all', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi'])]
+    #[Route('/{team}/reAddNameAll', name: 're_add_name_all', methods: ['POST'], requirements: ['team' => 'sith|trooper|jedi|copilop'])]
     public function reAddNameAll(string $team, EntityManagerInterface $em): JsonResponse
     {
         $firstNames = $em->getRepository(FirstName::class)->findBy(['isDrawn' => true, 'team' => $team]);

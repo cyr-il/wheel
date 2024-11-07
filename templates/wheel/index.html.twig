@@ -88,7 +88,11 @@
       </div>
       <div class="modal-body">
         <!-- Ici s'affichera le prénom du vainqueur -->
-        <p id="winner-name"></p><p> is the lucky winner for the next weather ! &#128540;</p>
+        {% if team == 'copilop' %}
+            <p id="winner-name"></p><p> is the lucky winner for the next meeting ! &#128540;</p>
+        {% else %}
+            <p id="winner-name"></p><p> is the lucky winner for the next weather ! &#128540;</p>
+        {% endif %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
