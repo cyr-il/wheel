@@ -32,3 +32,9 @@ team5_wheel:
     controller: App\Controller\WheelController::index
     defaults:
         team: 'valSE'
+
+newTeam_wheel:
+    path: /newTeam
+    controller: App\Controller\WheelController::index
+    defaults:
+        team: 'newTeam'
